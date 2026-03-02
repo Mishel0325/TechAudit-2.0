@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="estados_equipo">
+        <item>OPERATIVO</item>
+        <item>DANADO</item>
+        <item>PENDIENTE</item>
+    </string-array>
+
+</resources>
