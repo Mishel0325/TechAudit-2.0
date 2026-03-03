@@ -1,5 +1,6 @@
 package com.example.techaudit20
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -14,6 +15,7 @@ import com.example.techaudit20.data.local.DbProvider
 import com.example.techaudit20.data.local.LaboratorioEntity
 import com.example.techaudit20.data.remote.ApiProvider
 import com.example.techaudit20.data.repository.TechAuditRepository
+import com.example.techaudit20.ui.labs.LaboratorioAdapter
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var pbSync: ProgressBar
 
     private val labsList = mutableListOf<LaboratorioEntity>()
+    private lateinit var labsAdapter: LaboratorioAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,35 +43,37 @@ class MainActivity : AppCompatActivity() {
         tvMsg = findViewById(R.id.tvMsg)
         rvLabs = findViewById(R.id.rvLabs)
 
+        // Adapter + RecyclerView
+        labsAdapter = LaboratorioAdapter(labsList) { lab ->
+            val intent = Intent(this, EquiposActivity::class.java)
+            intent.putExtra(EquiposActivity.EXTRA_LAB_ID, lab.id)
+            startActivity(intent)
+        }
         rvLabs.layoutManager = LinearLayoutManager(this)
-        rvLabs.adapter = SimpleLabAdapter(labsList)
+        rvLabs.adapter = labsAdapter
 
-        // --- ROOM ---
+        // DB + API
         val db = DbProvider.get(this)
-
-        // --- API ---
         val api = ApiProvider.create("https://69a5f58a885dcb6bd6a9b9db.mockapi.io/")
 
-        // --- REPOSITORY ---
+        // Repository
         repo = TechAuditRepository(
             db.laboratorioDao(),
             db.equipoDao(),
             api
         )
 
-        // Cargar lista
+        // Cargar labs en RV
         lifecycleScope.launch {
             repo.labsFlow().collect { labs ->
-                labsList.clear()
-                labsList.addAll(labs)
-                rvLabs.adapter?.notifyDataSetChanged()
+                labsAdapter.submitList(labs)
             }
         }
 
         // Crear laboratorio
         btnCrear.setOnClickListener {
-            val nombre = etNombre.text?.toString().orEmpty()
-            val edificio = etEdificio.text?.toString().orEmpty()
+            val nombre = etNombre.text?.toString().orEmpty().trim()
+            val edificio = etEdificio.text?.toString().orEmpty().trim()
 
             lifecycleScope.launch {
                 repo.addLab(nombre, edificio)
@@ -86,11 +91,9 @@ class MainActivity : AppCompatActivity() {
                 val result = repo.sync()
                 pbSync.visibility = View.GONE
 
-                if (result.isSuccess) {
-                    tvMsg.text = "Sincronización exitosa"
-                } else {
-                    tvMsg.text = "Error: ${result.exceptionOrNull()?.message}"
-                }
+                tvMsg.text =
+                    if (result.isSuccess) "Sincronización exitosa"
+                    else "Error: ${result.exceptionOrNull()?.message}"
             }
         }
     }

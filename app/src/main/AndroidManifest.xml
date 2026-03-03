@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Necesario para Retrofit / MockAPI -->
+    <!-- Permiso para Retrofit / MockAPI -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -16,10 +16,12 @@
         android:theme="@style/Theme.TechAudit20"
         tools:targetApi="31">
 
+        <!-- EquiposActivity -->
         <activity
-            android:name=".ui.equipos.EquiposActivity"
+            android:name=".EquiposActivity"
             android:exported="false" />
 
+        <!-- Pantalla principal -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
