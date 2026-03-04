@@ -54,7 +54,7 @@ class TechAuditRepository(
     suspend fun sync(): Result<Unit> {
         return try {
             // Traer todo desde Room
-            val labs = eqDao.getLabsOnce()
+            val labs = labDao.getLabsOnce()
             val equipos = eqDao.getEquiposOnce()
 
             val payload = SyncPayload(

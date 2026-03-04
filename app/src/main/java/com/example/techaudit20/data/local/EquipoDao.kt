@@ -21,7 +21,6 @@ interface EquipoDao {
     // Para sincronizar (leer todo)
     @Query("SELECT * FROM laboratorios")
     suspend fun getLabsOnce(): List<LaboratorioEntity>
-
     @Query("SELECT * FROM equipos")
     suspend fun getEquiposOnce(): List<EquipoEntity>
 }

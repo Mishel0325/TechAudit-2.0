@@ -17,4 +17,9 @@ interface LaboratorioDao {
 
     @Delete
     suspend fun delete(item: LaboratorioEntity)
+
+    // Para sincronizar (leer todo una vez)
+    @Query("SELECT * FROM laboratorios")
+    suspend fun getLabsOnce(): List<LaboratorioEntity>
+
 }

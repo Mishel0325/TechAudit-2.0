@@ -28,4 +28,13 @@ class EquiposViewModel(
             repo.deleteEquipo(item)
         }
     }
+
+    fun updateEquipo(item: EquipoEntity) {
+        val n = item.nombre.trim()
+        if (n.isBlank()) return
+
+        viewModelScope.launch {
+            repo.updateEquipo(item.copy(nombre = n))
+        }
+    }
 }

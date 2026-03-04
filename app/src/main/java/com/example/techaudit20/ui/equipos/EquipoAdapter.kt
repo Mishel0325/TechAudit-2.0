@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.techaudit20.R
 import com.example.techaudit20.data.local.EquipoEntity
 
-class EquipoAdapter : RecyclerView.Adapter<EquipoAdapter.VH>() {
+class EquipoAdapter(
+    private val onClick: (EquipoEntity) -> Unit
+) : RecyclerView.Adapter<EquipoAdapter.VH>() {
 
     private val items = mutableListOf<EquipoEntity>()
 
@@ -29,6 +31,10 @@ class EquipoAdapter : RecyclerView.Adapter<EquipoAdapter.VH>() {
             tvNombre.text = item.nombre
             tvEstado.text = "Estado: ${item.estado.name}"
             tvId.text = "ID: ${item.id}"
+
+            itemView.setOnClickListener {
+                onClick(item)
+            }
         }
     }
 

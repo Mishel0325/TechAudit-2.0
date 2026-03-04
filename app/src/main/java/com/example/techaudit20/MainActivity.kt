@@ -15,6 +15,7 @@ import com.example.techaudit20.data.local.DbProvider
 import com.example.techaudit20.data.local.LaboratorioEntity
 import com.example.techaudit20.data.remote.ApiProvider
 import com.example.techaudit20.data.repository.TechAuditRepository
+import com.example.techaudit20.ui.equipos.EquiposActivity
 import com.example.techaudit20.ui.labs.LaboratorioAdapter
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
@@ -46,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         // Adapter + RecyclerView
         labsAdapter = LaboratorioAdapter(labsList) { lab ->
             val intent = Intent(this, EquiposActivity::class.java)
-            intent.putExtra(EquiposActivity.EXTRA_LAB_ID, lab.id)
+            intent.putExtra(EquiposActivity.EXTRA_LAB_ID, lab.id) // lab.id es Long ✅
             startActivity(intent)
         }
         rvLabs.layoutManager = LinearLayoutManager(this)

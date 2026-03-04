@@ -18,7 +18,7 @@
 
         <!-- EquiposActivity -->
         <activity
-            android:name=".EquiposActivity"
+            android:name=".ui.equipos.EquiposActivity"
             android:exported="false" />
 
         <!-- Pantalla principal -->
