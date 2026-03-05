@@ -2,9 +2,9 @@
 <resources>
 
     <string-array name="estados_equipo">
-        <item>OPERATIVO</item>
-        <item>DAÑADO</item>
-        <item>PENDIENTE</item>
+        <item>Operativo</item>
+        <item>Dañado</item>
+        <item>Pendiente</item>
     </string-array>
 
 </resources>
