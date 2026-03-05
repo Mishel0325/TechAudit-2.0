@@ -8,6 +8,34 @@
     android:padding="16dp"
     tools:context=".ui.equipos.EquiposActivity">
 
+    <!-- BARRA SUPERIOR -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarTop"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:background="#6A4FB3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="-16dp"
+        android:layout_marginEnd="-16dp"
+        android:layout_marginTop="-16dp"/>
+
+    <!-- TEXTO CENTRADO SOBRE LA BARRA -->
+    <TextView
+        android:id="@+id/tvAppTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TechAudit 2.0"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toTopOf="@id/toolbarTop"
+        app:layout_constraintBottom_toBottomOf="@id/toolbarTop"
+        app:layout_constraintStart_toStartOf="@id/toolbarTop"
+        app:layout_constraintEnd_toEndOf="@id/toolbarTop" />
+
+
     <!-- Volver -->
     <ImageButton
         android:id="@+id/btnBack"
@@ -17,7 +45,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@android:drawable/ic_media_previous"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/toolbarTop" />
 
     <!-- Título -->
     <TextView

@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -21,6 +20,7 @@ import com.example.techaudit20.data.local.EstadoEquipo
 import com.example.techaudit20.data.local.EquipoEntity
 import com.example.techaudit20.data.remote.ApiProvider
 import com.example.techaudit20.data.repository.TechAuditRepository
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 
@@ -41,20 +41,26 @@ class EquiposActivity : AppCompatActivity() {
         // Obtener labId
         val labId = intent.getLongExtra(EXTRA_LAB_ID, -1L)
 
+        // Toolbar (TechAudit 2.0 + flecha atrás)
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
         // Views
-        val btnBack = findViewById<ImageButton>(R.id.btnBack)
         val etNombre = findViewById<TextInputEditText>(R.id.etNombreEquipo)
         val spEstado = findViewById<Spinner>(R.id.spEstado)
         val btnAgregar = findViewById<Button>(R.id.btnAgregarEquipo)
         val tvMsg = findViewById<TextView>(R.id.tvMsgEquipos)
         val rvEquipos = findViewById<RecyclerView>(R.id.rvEquipos)
 
-        // Spinner estados (crear)
-        val estados = EstadoEquipo.values().map { it.name }
+        // Spinner estados (mostrar bonito: DAÑADO)
+        val estadosUi = EstadoEquipo.values().map { estadoToUi(it) }
         val spinnerAdapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_item,
-            estados
+            estadosUi
         )
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spEstado.adapter = spinnerAdapter
@@ -94,7 +100,8 @@ class EquiposActivity : AppCompatActivity() {
         // Agregar equipo
         btnAgregar.setOnClickListener {
             val nombre = etNombre.text?.toString().orEmpty()
-            val estado = EstadoEquipo.valueOf(spEstado.selectedItem.toString())
+            val estadoUi = spEstado.selectedItem?.toString().orEmpty()
+            val estado = uiToEstado(estadoUi)
 
             viewModel.addEquipo(nombre, estado)
             tvMsg.text = "Equipo agregado"
@@ -119,9 +126,6 @@ class EquiposActivity : AppCompatActivity() {
             }
         }
         ItemTouchHelper(swipe).attachToRecyclerView(rvEquipos)
-
-        // Volver
-        btnBack.setOnClickListener { finish() }
     }
 
     private fun showEditDialog(item: EquipoEntity, tvMsg: TextView) {
@@ -132,16 +136,19 @@ class EquiposActivity : AppCompatActivity() {
 
         etNombre.setText(item.nombre)
 
-        val estados = EstadoEquipo.values().map { it.name }
+        // Spinner estados
+        val estadosUi = EstadoEquipo.values().map { estadoToUi(it) }
         val spAdapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_item,
-            estados
+            estadosUi
         )
         spAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spEstado.adapter = spAdapter
 
-        val idx = estados.indexOf(item.estado.name).coerceAtLeast(0)
+        // Selección actual
+        val currentUi = estadoToUi(item.estado)
+        val idx = estadosUi.indexOf(currentUi).coerceAtLeast(0)
         spEstado.setSelection(idx)
 
         AlertDialog.Builder(this)
@@ -149,7 +156,8 @@ class EquiposActivity : AppCompatActivity() {
             .setView(dialogView)
             .setPositiveButton("Guardar") { _, _ ->
                 val nuevoNombre = etNombre.text?.toString().orEmpty()
-                val nuevoEstado = EstadoEquipo.valueOf(spEstado.selectedItem.toString())
+                val nuevoEstadoUi = spEstado.selectedItem?.toString().orEmpty()
+                val nuevoEstado = uiToEstado(nuevoEstadoUi)
 
                 viewModel.updateEquipo(
                     item.copy(nombre = nuevoNombre, estado = nuevoEstado)
@@ -158,5 +166,22 @@ class EquiposActivity : AppCompatActivity() {
             }
             .setNegativeButton("Cancelar") { d, _ -> d.dismiss() }
             .show()
+    }
+
+    private fun estadoToUi(e: EstadoEquipo): String {
+        return when (e.name) {
+            "DANADO" -> "DAÑADO"
+            "DAÑADO" -> "DAÑADO"
+            else -> e.name
+        }
+    }
+
+    private fun uiToEstado(ui: String): EstadoEquipo {
+        val normalized = ui
+            .trim()
+            .uppercase()
+            .replace("Ñ", "N")
+
+        return EstadoEquipo.valueOf(normalized)
     }
 }

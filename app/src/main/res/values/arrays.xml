@@ -3,7 +3,7 @@
 
     <string-array name="estados_equipo">
         <item>OPERATIVO</item>
-        <item>DANADO</item>
+        <item>DAÑADO</item>
         <item>PENDIENTE</item>
     </string-array>
 
